@@ -25,8 +25,7 @@ $(TARGET): $(OBJ) -loolm -ldstruct -lmisc
 all: $(TARGET)
 
 map:
-	@#TODO
-	@#python3 mapping.py $(FROM) $(TO)
+	python3 mapping.py Big5-ZhuYin.map ZhuYin-Big5.map
 
 clean:
 	$(RM) $(OBJ) $(TARGET)
