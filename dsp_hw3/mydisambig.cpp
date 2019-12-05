@@ -29,7 +29,7 @@ int main(int argc, char const *argv[])
 	while (getline(mapFile, str)) {
 		string ZhuYin = str.substr(0, 2);
 		vector<string> Big5_word;
-		for (int i = 3; i < str.size; i += 3) 
+		for (int i = 3; i < str.size(); i += 3) 
 			Big5_word.push_back(str.substr(i, 2));
 		ZBmap[ZhuYin] = Big5_word;
 	}
@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
 	fout.open(argv[4], ios::out|ios::binary);
 	while (getline(fin, str)) {
 		/* input sentance */
-		vector<string> input;
+		string input;
 		for (int i = 0; i < str.size(); i++) 
 			if (str[i] != ' ') input += str[i];
 		
@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
 		vector<double> prob;
 		vector<int> last_idx;
 		for (int j = 0; j < words[0].size(); j++) {
-			VocabIndex w = voc.getIndex(words[0][j]);
+			VocabIndex w = voc.getIndex(words[0][j].c_str());
 			w = (w == Vocab_None)? voc.getIndex(Vocab_Unknown): w;
 			VocabIndex context[] = {Vocab_None};
 			prob.push_back(lm.wordProb(w, context));
@@ -65,16 +65,18 @@ int main(int argc, char const *argv[])
 		}
 		probs.push_back(prob);
 		last_Idx.push_back(last_idx);
+		prob.clear();
+		last_idx.clear();
 
 		/* recursion */
 		for (int i = 1; i < words.size(); i++) {
 			for (int j = 0; j < words[i].size(); j++) {
-				VocabIndex w1 = voc.getIndex(words[i][j]);
+				VocabIndex w1 = voc.getIndex(words[i][j].c_str());
 				w1 = (w1 == Vocab_None)? voc.getIndex(Vocab_Unknown): w1;
 				double max_p = SMALL;
 				int mark = 0;
 				for (int k = 0; k < words[i - 1].size(); k++) {
-					VocabIndex w2 = voc.getIndex(words[i - 1][k]);
+					VocabIndex w2 = voc.getIndex(words[i - 1][k].c_str());
 					w2 = (w2 == Vocab_None)? voc.getIndex(Vocab_Unknown): w2;
 					VocabIndex context[] = {w2, Vocab_None};
 					double p = lm.wordProb(w1, context) + probs[i - 1][k];
@@ -86,6 +88,8 @@ int main(int argc, char const *argv[])
 			}
 			probs.push_back(prob);
 			last_Idx.push_back(last_idx);
+			prob.clear();
+			last_idx.clear();
 		}
 
 		/* output */
@@ -97,12 +101,12 @@ int main(int argc, char const *argv[])
 				mark = i;
 			}
 		}
-		fout << "<s>" << " ";
+		string out = "</s>";
 		for (int i = len - 1; i >= 0 && mark != NOTHING; i--) {
-			fout << words[i][mark] << " ";
+			out = words[i][mark] + " " + out;
 			mark = last_Idx[i][mark];
 		}
-		fout << "</s>" << "\n";
+		fout << "<s>" << " " << out << endl;
 	}
 	fin.close();
 	fout.close();
