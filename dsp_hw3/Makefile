@@ -4,6 +4,7 @@ INC_PATH ?= inc
 SRC_PATH ?= src
 
 CXX = g++
+PY3 = python3
 CXXFLAGS = -O2 -I$(SRIPATH)/include -I$(INC_PATH)
 vpath lib%.a $(SRIPATH)/lib/$(MACHINE_TYPE)
 vpath %.c $(SRC_PATH)
@@ -12,6 +13,7 @@ vpath %.cpp $(SRC_PATH)
 TARGET = mydisambig
 SRC = mydisambig.cpp
 OBJ = $(SRC:.cpp=.o)
+MAPPING = mapping.py
 FROM ?= Big5-ZhuYin.map
 TO ?= ZhuYin-Big5.map
 .PHONY: all clean map
@@ -25,7 +27,7 @@ $(TARGET): $(OBJ) -loolm -ldstruct -lmisc
 all: $(TARGET)
 
 map:
-	python3 mapping.py Big5-ZhuYin.map ZhuYin-Big5.map
+	$(PY3) $(MAPPING) $(FROM) $(TO)
 
 clean:
 	$(RM) $(OBJ) $(TARGET)
