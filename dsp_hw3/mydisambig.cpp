@@ -57,10 +57,12 @@ int main(int argc, char const *argv[])
 		vector<double> prob;
 		vector<int> last_idx;
 		for (int j = 0; j < words[0].size(); j++) {
-			VocabIndex w = voc.getIndex(words[0][j].c_str());
-			w = (w == Vocab_None)? voc.getIndex(Vocab_Unknown): w;
-			VocabIndex context[] = {Vocab_None};
-			prob.push_back(lm.wordProb(w, context));
+			VocabIndex w1 = voc.getIndex(words[0][j].c_str());
+			w1 = (w1 == Vocab_None)? voc.getIndex(Vocab_Unknown): w1;
+			VocabIndex w2 = voc.getIndex("<s>");
+			w2 = (w2 == Vocab_None)? voc.getIndex(Vocab_Unknown): w2;
+			VocabIndex context[] = {w2, Vocab_None};
+			prob.push_back(lm.wordProb(w1, context));
 			last_idx.push_back(NOTHING);
 		}
 		probs.push_back(prob);
