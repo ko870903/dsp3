@@ -49,9 +49,12 @@ int main(int argc, char const *argv[])
 		vector<vector<string>> words;
 		vector<vector<double>> probs;
 		vector<vector<int>> last_Idx;
+		vector<string> end_words;
+		end_words.push_back("</s>");
 
 		for (int i = 0; i < input.size() / 2; i++) 
 			words.push_back(ZBmap[input.substr(i * 2, 2)]);
+		words.push_back(end_words);
 
 		/* initial */
 		vector<double> prob;
@@ -103,12 +106,12 @@ int main(int argc, char const *argv[])
 				mark = i;
 			}
 		}
-		string out = "</s>";
+		string out;
 		for (int i = len - 1; i >= 0 && mark != NOTHING; i--) {
-			out = words[i][mark] + " " + out;
+			out = " " + words[i][mark] + out;
 			mark = last_Idx[i][mark];
 		}
-		fout << "<s>" << " " << out << endl;
+		fout << "<s>" << out << endl;
 	}
 	fin.close();
 	fout.close();
