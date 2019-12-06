@@ -13,7 +13,7 @@ vpath %.cpp $(SRC_PATH)
 TARGET = mydisambig
 SRC = mydisambig.cpp
 OBJ = $(SRC:.cpp=.o)
-MAPPING = mapping.py
+MAPPING = $(SRC_PATH)/mapping.py
 FROM ?= Big5-ZhuYin.map
 TO ?= ZhuYin-Big5.map
 .PHONY: all clean map
